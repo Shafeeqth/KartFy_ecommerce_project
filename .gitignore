@@ -1,0 +1,90 @@
+# Node.js
+
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# dotenv environment variables file
+.env
+
+# MacOS files
+.DS_Store
+
+# Windows files
+Thumbs.db
+Desktop.ini
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# Parcel-bundler cache
+.cache/
+
+# SvelteKit build
+.svelte-kit/
+
+# Next.js build
+.next/
+
+# Nuxt.js build
+.nuxt/
+
+# Gatsby files
+.cache/
+
+# Gridsome files
+.cache/
+dist/
+
+# VuePress build
+.vuepress/dist/
+
+# Docusaurus build
+.build/
+
+# 11ty output
+_site/
+
+# Hexo output
+public/
+
+# Jekyll output
+_site/
+
+
+
+# temporary files
+*.tmp
+*.temp

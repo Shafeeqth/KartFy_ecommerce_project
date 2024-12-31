@@ -17,7 +17,6 @@ const bcrypt = require('bcrypt');
 const loadHome = asyncHandler(async (req, res, next) => {
     let user = req.session.user ? req.session.user : null;
     let banners = await Banner.find({ isListed: true })
-    console.log(banners)
     res.status(200).render('user/homePage', { banners });
 })
 

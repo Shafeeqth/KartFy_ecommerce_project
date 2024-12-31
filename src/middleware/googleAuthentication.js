@@ -22,8 +22,7 @@ const googleLogin = asyncHandler(async (req, res, next) => {
             if (userAlready.isBlocked) {
 
                 req.flash('blockedError', 'User is blocked by Admin')
-                res
-                .status(304)
+                res.status(304)
                 .redirect('/api/v1/signin');
 
             } else {
