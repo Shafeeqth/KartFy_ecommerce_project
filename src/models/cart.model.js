@@ -1,7 +1,5 @@
-
-
 const mongoose = require('mongoose');
-const Coupon = require('../models/couponModel');
+const Coupon = require('./coupon.model');
 const cartSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -83,21 +81,3 @@ const cartSchema = mongoose.Schema({
 
 const Cart = mongoose.model('Cart', cartSchema);
 
-
-
-const wishlistSchema = mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    }, product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-    }
-});
-
-const Wishlist = mongoose.model('Wishlist', wishlistSchema);
-
-module.exports = {
-    Wishlist,
-    Cart,
-}
