@@ -1,8 +1,8 @@
-const User = require('../models/userModel');
+const User = require('../models/user.model');
 const asyncHandler = require('../utilities/asyncHandler');
-const Notification = require('../models/notificationModel');
-const Wallet = require('../models/walletModel');
-const Referrel = require('../models/referrelModel');
+const Notification = require('../models/notification.model');
+const Wallet = require('../models/wallet.model');
+const Referrel = require('../models/referrel.model');
 const generateOtp = require('generate-otp');
 
 
