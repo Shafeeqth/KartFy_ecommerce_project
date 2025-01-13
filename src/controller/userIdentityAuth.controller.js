@@ -1,17 +1,17 @@
-const OTP = require('../models/otpModel');
+const OTP = require('../models/otp.model');
 const bcrypt = require('bcrypt');
 const userHelper = require('../helpers/validations');
-const sendMail = require('../helpers/nodeMailer');
+const sendMail = require('../utilities/sendMail');
 const generateOtp = require('otp-generator');
 const mongoose = require('mongoose');
 const ApiError = require('../utilities/apiError');
 const ApiResponse = require('../utilities/apiResponse');
 const asyncHandler = require('../utilities/asyncHandler');
-const User = require('../models/userModel');
-const Wallet = require('../models/walletModel');
-const Referrel = require('../models/referrelModel')
-const Notification = require('../models/notificationModel')
-const { otpTemplate, passwordUpdated } = require('../helpers/emailTemplates');
+const User = require('../models/user.model');
+const Wallet = require('../models/wallet.model');
+const Referrel = require('../models/referrel.model')
+const Notification = require('../models/notification.model')
+const { otpTemplate, passwordUpdated } = require('../utilities/emailTemplates');
 
 
 

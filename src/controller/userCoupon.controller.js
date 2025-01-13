@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const Coupon = require('../models/couponModel');
-const { Cart, Wishlist } = require('../models/CartAndWishlistModel');
+const Coupon = require('../models/coupon.model');
+const { Cart, Wishlist } = require('../models/wishlist.model');
 const asyncHandler = require('../utilities/asyncHandler');
 
 const checkValidCoupon = asyncHandler(async (req, res, next) => {

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const { Product, Inventory } = require('../models/productModels');
-const { Cart, Wishlist } = require('../models/CartAndWishlistModel');
+const { Product, Inventory } = require('../models/product.models');
+const { Cart, Wishlist } = require('../models/wishlist.model');
 const asyncHandler = require('../utilities/asyncHandler');
 const { calculateDeliveryCharge, getCordinates, getDistance } = require('../helpers/calculateDeliveryCharge');
 

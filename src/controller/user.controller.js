@@ -2,16 +2,16 @@ const mongoose = require('mongoose');
 const ApiError = require('../utilities/apiError');
 const ApiResponse = require('../utilities/apiResponse');
 const asyncHandler = require('../utilities/asyncHandler');
-const Coupon = require('../models/couponModel');
-const User = require('../models/userModel');
-const Address = require('../models/addressModel');
-const Category = require('../models/categoryModel');
-const { Product, Inventory } = require('../models/productModels');
-const { Cart, Wishlist } = require('../models/CartAndWishlistModel');
-const Wallet = require('../models/walletModel');
-const Banner = require('../models/bannerModel');
-const Referrel = require('../models/referrelModel');
-const Notification = require('../models/notificationModel');
+const Coupon = require('../models/coupon.model');
+const User = require('../models/user.model');
+const Address = require('../models/address.model');
+const Category = require('../models/category.model');
+const { Product, Inventory } = require('../models/product.models');
+const { Cart, Wishlist } = require('../models/wishlist.model');
+const Wallet = require('../models/wallet.model');
+const Banner = require('../models/banner.model');
+const Referrel = require('../models/referrel.model');
+const Notification = require('../models/notification.model');
 const bcrypt = require('bcrypt');
 
 const loadHome = asyncHandler(async (req, res, next) => {
@@ -32,10 +32,13 @@ const loadShop = asyncHandler(async (req, res, next) => {
     if (gender) categor.push({ 'products.category.Gender': { $in: gender } });
     if (category) categor.push({ 'products.category.Category': { $in: category } })
     if (brand) categor.push({ 'products.category.Brands': { $in: brand } })
+
+    
+    // use query params to filter out the required products
     let matchValue = {};
     let sort = req.query.sort?.trim() || ''
     let search = req.query.search ? String(req.query.search).trim() : ''
-    search ? (search = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) : (search = '')
+    search ? (search = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) : (search = '') // sanitize special characters from search input 
     if (gender || category || brand) {
         matchValue = {
             $or: categor
@@ -49,6 +52,7 @@ const loadShop = asyncHandler(async (req, res, next) => {
     let categories = await Category.find({ isListed: true })
     let inventory = await Inventory.aggregate([
         {
+        
             $lookup: {
                 from: 'products',
                 localField: 'product',
@@ -57,7 +61,7 @@ const loadShop = asyncHandler(async (req, res, next) => {
                 pipeline: [
                     {
                         $match: {
-                            isListed: true
+                            isListed: true // only joins listed products 
                         }
                     }
                 ]
@@ -83,13 +87,14 @@ const loadShop = asyncHandler(async (req, res, next) => {
                 pipeline: [
                     {
                         $match: {
-                            isListed: true
+                            isListed: true // listed out only listed individual product offers
                         }
                     }
                 ]
             }
         },
         {
+            // joins the associated offers to the particular product
             $lookup: {
                 from: 'offers',
                 localField: 'products.category.Category',
@@ -98,18 +103,19 @@ const loadShop = asyncHandler(async (req, res, next) => {
                 pipeline: [
                     {
                         $match: {
-                            isListed: true
+                            isListed: true // filters out only listed category offers
                         }
                     }
                 ]
             }
         },
         {
+            // Checks whether the offer is product offer or category offer 
             $addFields: {
                 shouldUnwindCategory: {
                     $cond: [{
                         $eq: [{
-                            $size: '$categoryOffer'
+                            $size: '$categoryOffer' 
                         }, 0]
                     },
                         false,
@@ -131,13 +137,13 @@ const loadShop = asyncHandler(async (req, res, next) => {
         {
             $unwind: {
                 path: '$productOffer',
-                preserveNullAndEmptyArrays: true
+                preserveNullAndEmptyArrays: true // so won't be unexpected behavior (could be empty array to unwind) 
             },
         },
         {
             $unwind: {
                 path: '$categoryOffer',
-                preserveNullAndEmptyArrays: true,
+                preserveNullAndEmptyArrays: true, // so won't be unexpected behavior with unwind
             }
         },
         {
@@ -165,6 +171,7 @@ const loadShop = asyncHandler(async (req, res, next) => {
                         null
                     ]
                 },
+                // finds the product offer price dynamically with condition(cond) -> offer price = price - (price * rate / 100)
                 productOfferPrice: {
                     $cond: [
                         '$shouldUnwindProduct',
@@ -192,10 +199,10 @@ const loadShop = asyncHandler(async (req, res, next) => {
                     $sum: '$sizeVariant.stock'
                 },
                 minimumPrice: {
-                    $min: ['$productOfferPrice', '$categoryOfferPrice', '$products.price']
+                    $min: ['$productOfferPrice', '$categoryOfferPrice', '$products.price'] // finds the minimum of the offer prices or original price
                 },
                 reviewAvg: {
-                    $avg: '$reviews.rating'
+                    $avg: '$reviews.rating' // average of reviews
 
                 },
                 category: {
@@ -227,16 +234,17 @@ const loadShop = asyncHandler(async (req, res, next) => {
             }
         },
         {
-            $match: matchValue
+            $match: matchValue // apply filter logic to result
         },
         {
             $match: {
-                'products.title': { $regex: search, $options: "i" },
+                'products.title': { $regex: search, $options: "i" }, // filters with search params 
             }
         },
         {
             $sort: sort
-        },
+        }, 
+        // limits number of elements
         {
             $skip: page * limit
         },

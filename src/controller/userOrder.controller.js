@@ -1,18 +1,18 @@
-const { Order, Return, Review } = require('../models/orderModels');
-const Coupon = require('../models/couponModel');
-const User = require('../models/userModel');
-const Address = require('../models/addressModel');
-const { Product, Inventory } = require('../models/productModels');
-const { Cart, Wishlist } = require('../models/CartAndWishlistModel');
+const { Order, Return, Review } = require('../models/order.models');
+const Coupon = require('../models/coupon.model');
+const User = require('../models/user.model');
+const Address = require('../models/address.model');
+const { Product, Inventory } = require('../models/product.models');
+const { Cart, Wishlist } = require('../models/wishlist.model');
 const asyncHandler = require('../utilities/asyncHandler');
-const { createRazorpayOrder, createPayPalPayment } = require('../controller/paymentControllers');
+const { createRazorpayOrder, createPayPalPayment } = require('../controller/payment.controller');
 const mongoose = require('mongoose');
-const Wallet = require('../models/walletModel');
+const Wallet = require('../models/wallet.model');
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('node:fs');
 const ejs = require('ejs');
-const Notification = require('../models/notificationModel')
+const Notification = require('../models/notification.model')
 
 const loadOrderSuccess = asyncHandler(async (req, res, next) => {
     let orderId = req.query['orderId'];
