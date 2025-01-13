@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const ApiError = require('../utilities/apiError');
 const ApiResponse = require('../utilities/apiResponse');
 const asyncHandler = require('../utilities/asyncHandler');
-const Category = require('../models/categoryModel');
+const Category = require('../models/category.model');
 
 const loadCategories = asyncHandler(async (req, res, next) => {
     let page = parseInt(req.query.page) - 1 || 0;

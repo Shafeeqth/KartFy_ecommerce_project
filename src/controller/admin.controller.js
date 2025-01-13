@@ -2,25 +2,25 @@ const mongoose = require('mongoose');
 const ApiError = require('../utilities/apiError');
 const ApiResponse = require('../utilities/apiResponse');
 const asyncHandler = require('../utilities/asyncHandler');
-const { Order, OrderReturn, Review, Return } = require('../models/orderModels');
-const Coupon = require('../models/couponModel');
-const User = require('../models/userModel');
-const Offer = require('../models/offerModel');
+const { Order, OrderReturn, Review, Return } = require('../models/order.models');
+const Coupon = require('../models/coupon.model');
+const User = require('../models/user.model');
+const Offer = require('../models/offer.model');
 const { v4: uuidv4, v5: uuidv5 } = require('uuid');
-const Category = require('../models/categoryModel');
-const Banner = require('../models/bannerModel');
+const Category = require('../models/category.model');
+const Banner = require('../models/banner.model');
 const path = require('node:path');
 const sharp = require('sharp');
-const { Product, Inventory } = require('../models/productModels')
-const Wallet = require('../models/walletModel');
+const { Product, Inventory } = require('../models/product.models')
+const Wallet = require('../models/wallet.model');
 const excelJs = require('exceljs');
-const Notification = require('../models/notificationModel');
+const Notification = require('../models/notification.model');
 
 const loadDashboard = asyncHandler(async (req, res, next) => {
     let now = new Date();
-    let users = await User.countDocuments({})
+    let users = await User.countDocuments({}); // fetch total user counts 
     let products = await Product.countDocuments({ isListed: true });
-    let orders = await Order.countDocuments({ orderStatus: 'Delivered' });
+    let orders = await Order.countDocuments({ orderStatus: 'Delivered' }); // fetch total delivered ordered count
     let revenue = await Order.aggregate([
         {
             $match: {
@@ -40,8 +40,8 @@ const loadDashboard = asyncHandler(async (req, res, next) => {
         }
     ]);
 
-    let topTenCetagory = await findTopTen('Category')
-    let topTenBrand = await findTopTen('Brands')
+    let topTenCategory = await findTopTen('Category')
+    let topTenBrand = await findTopTen('Brands');
 
     async function findTopTen(filter) {
         let result = await Order.aggregate([
@@ -71,13 +71,13 @@ const loadDashboard = asyncHandler(async (req, res, next) => {
             {
                 $group: {
                     _id: `$product.category.${filter}`,
-                    sum: {
-                        $sum: 1
+                    count: {
+                        $sum: 1 // find the count
                     }
                 }
             }, {
                 $sort: {
-                    sum: -1
+                    count: -1 // sorting desc on count 
                 }
             },
             {
@@ -92,6 +92,7 @@ const loadDashboard = asyncHandler(async (req, res, next) => {
             }
         ])
 
+        // format result 
         return result.map(item => {
             return {
                 item: item.item[0],
@@ -100,7 +101,7 @@ const loadDashboard = asyncHandler(async (req, res, next) => {
         })
     }
 
-    let topSellingProduct = await Order.aggregate([
+    let topSellingTenProducts = await Order.aggregate([
         {
             $match: {
                 orderStatus: 'Delivered'
@@ -137,8 +138,8 @@ const loadDashboard = asyncHandler(async (req, res, next) => {
             $unwind: '$product'
         }
     ])
-
-    let monthlyDataAggre = await Order.aggregate([
+    // find the monthly delivered order along with its aggregate price
+    let monthlyDeliveredOrders = await Order.aggregate([
         {
             $match: {
                 orderStatus: 'Delivered'
@@ -160,16 +161,16 @@ const loadDashboard = asyncHandler(async (req, res, next) => {
 
     ])
     let monthlyData = Array.from({ length: 12 }).fill(0);
-    monthlyDataAggre.forEach(item => {
+    monthlyDeliveredOrders.forEach(item => {
         let monthIndex = parseInt(item._id, 10) - 1;
         if (monthIndex >= 0 && monthIndex < 12) {
             monthlyData[monthIndex] = item.totalAmount
         }
     })
-    monthlyRevenue = monthlyDataAggre.find(item => item._id == now.getMonth() + 1)?.totalAmount
+    monthlyRevenue = monthlyDeliveredOrders.find(item => item._id == now.getMonth() + 1)?.totalAmount // retrieve the current monthly revenue
 
     res.status(200)
-        .render('admin/adminDashboard', { userCount: users, orderCount: orders, product: products, revenue: revenue[0].revenue, monthlyRevenue, monthlyData, name: topSellingProduct, brand: topTenBrand, topTenCetagory: topTenCetagory });
+        .render('admin/adminDashboard', { userCount: users, orderCount: orders, product: products, revenue: revenue[0].revenue, monthlyRevenue, monthlyData, name: topSellingTenProducts, brand: topTenBrand, topTenCetagory: topTenCatagory });
 })
 
 const getFilterData = asyncHandler(async (req, res, next) => {
@@ -445,7 +446,7 @@ const changeOrderStatus = asyncHandler(async (req, res, next) => {
     let order = await Order.findOne({ _id: orderId });
     order.orderStatus = status;
     let flag = true;
-    if (status == 'Cancelled' && order.paymentStatus == 'Paid') {
+    if (status === 'Cancelled' && order.paymentStatus === 'Paid') {
         if (['PayPal', 'RazorPay', 'Wallet'].includes(order.paymentMethod)) {
             let refundAmount = order.orderAmount + (order.coupon?.discount || 0)
             let wallet = await Wallet.updateOne({
@@ -615,7 +616,7 @@ const listAndUnlistCoupon = asyncHandler(async (req, res, next) => {
             success: true,
             error: false,
             data: coupon,
-            message: 'Coupn updated successfully'
+            message: 'Coupon updated successfully'
         })
 })
 

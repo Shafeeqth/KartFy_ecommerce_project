@@ -3,8 +3,8 @@ const helper = require('../helpers/validations');
 const ApiError = require('../utilities/apiError');
 const ApiResponse = require('../utilities/apiResponse');
 const asyncHandler = require('../utilities/asyncHandler');
-const { Product, Inventory } = require('../models/productModels');
-const Category = require('../models/categoryModel');
+const { Product, Inventory } = require('../models/product.models');
+const Category = require('../models/category.model');
 const path = require('node:path');
 const sharp = require('sharp');
 
