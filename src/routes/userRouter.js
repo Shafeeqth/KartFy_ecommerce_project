@@ -2,16 +2,34 @@ const express = require('express');
 const router = express.Router();
 
 //Requre all admin functions
-const userController = require('../controller/userController.js');
-const userMiddleware = require('../middleware/userMiddleware.js');
-const UserIdentityAndAuth = require('../controller/userIdentityAuthcontroller.js');
+const userController = require('../controller/user.controller.js');
+const userMiddleware = require('../middleware/user.middleware.js');
+const UserIdentityAndAuth = require('../controller/userIdentityAuth.controller.js');
 const { userAndemailValid } = require('../helpers/validations.js');
-const userOrderController = require('../controller/userOrderController.js')
-const userCartAndWishlistController = require('../controller/userCartAndWishlistController.js')
-const userCouponController = require('../controller/userCouponController.js')
+const userOrderController = require('../controller/userOrder.controller.js')
+const userCartAndWishlistController = require('../controller/userCartAndWishlist.controller.js')
+const userCouponController = require('../controller/userCoupon.controller.js')
 const upload = require('../helpers/multer.js');
 
 // Load the Home Page
+/**
+ * @swagger
+ * /api/v1:
+ *   get:
+ *     summary: loading page
+ *     description: returns landing page html.
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Hello, Swagger!
+ */
 router.get('/', userMiddleware.userHeaderPopulator, userController.loadHome);
 
 router.get('/user-notifications', userController.loadUserNotifications);

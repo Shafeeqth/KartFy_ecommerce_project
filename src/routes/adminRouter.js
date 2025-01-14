@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const upload = require('../helpers/multer');
 
-const adminController = require('../controller/adminController');
-const adminMiddleware = require('../middleware/adminMiddleware');
-const productController = require('../controller/adminProductController')
-const categoryController = require('../controller/adminCategoryController');
+const adminController = require('../controller/admin.controller');
+const adminMiddleware = require('../middleware/admin.middleware');
+const productController = require('../controller/adminProduct.controller')
+const categoryController = require('../controller/adminCategory.controller');
 
 
 /*============================= Routes related to admin authentications  ================================*/
